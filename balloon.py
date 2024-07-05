@@ -30,11 +30,12 @@ class Balloon:
         self.score = 0
         self.run = True
         self.start_time = time.time()  # 获取游戏开始时间
-        self.total_time = 30  # 总倒计时时间（60秒）
+        self.total_time = 300  # 总倒计时时间（60秒）
+        self.hscore = 50
         self.bk = (0,0,0)
         self.w = (255,255,255)
         self.re = (255,0,0)
-        self.level = '2'
+        self.level = '7'
             # '1': '20以内加法',
             # '2': '20以内减法',
             # '3': '20以内混合加减法',
@@ -81,7 +82,26 @@ class Balloon:
         balloon['x'] = ra (100,700)
         balloon['y'] = ra (780,900)
         balloon['speed'] = ra (1,2) / 2
-        char, answer = self.生成气球文字和答案()
+        char = ''
+        answer = ''
+        if self.level == '1':
+            char, answer = self.生成气球文字和答案(self.level)
+        elif self.level == '2':
+            char, answer = self.生成气球文字和答案(self.level)
+        elif self.level == '3':
+            level = ch (('1','2'))
+            char, answer = self.生成气球文字和答案(level)
+        elif self.level == '4':
+            char, answer = self.生成气球文字和答案(self.level)
+        elif self.level == '5':
+            char, answer = self.生成气球文字和答案(self.level)
+        elif self.level == '6':
+            level = ch (('4','5'))
+            char, answer = self.生成气球文字和答案(level)
+        elif self.level == '7':
+            char, answer = self.生成气球文字和答案(self.level)
+            
+
         balloon['char'] = char
         balloon['answer'] = answer 
         balloon['text_color'] = self.bk
@@ -99,9 +119,7 @@ class Balloon:
                     self.input_text += event.unicode
                 elif event.key == pygame.K_SPACE and self.run:
                     for balloon in self.balloons:
-                        print(self.input_text)
-                        print(balloon['answer'])
-                        if int(self.input_text) == balloon['answer']:
+                        if self.input_text and int(self.input_text) == balloon['answer']:
                             balloon['text_color'] = self.w
                             time.sleep(0.2)
                             self.score += balloon['score']
@@ -112,9 +130,9 @@ class Balloon:
                     self.input_text = ""
 
 
-    def 生成气球文字和答案(self):
+    def 生成气球文字和答案(self,type):
 
-        while self.level == '1':
+        while type == '1':
             p = ra (1,10)
             q = ra (1,10)
             if p + q < 10:
@@ -123,7 +141,7 @@ class Balloon:
             answer = int(p + q)
             return char, answer
         
-        while self.level  == '2':
+        while type  == '2':
             p = ra (9,19)
             q = ra (0,19)
             if p > q:
@@ -133,10 +151,7 @@ class Balloon:
                 continue
             return char, answer
         
-        while self.level == '3':
-            pass
-
-        while self.level == '4':
+        while type == '4':
             p = ra (1, 100)
             q = ra (1, 100)
             if 10 < p + q < 100:
@@ -146,7 +161,7 @@ class Balloon:
             else:
                 continue
         
-        while self.level  == '5':
+        while type  == '5':
             p = ra (20,100)
             q = ra (1,100)
             if p > q:
@@ -156,22 +171,25 @@ class Balloon:
                 continue
             return char, answer
         
-        while self.level == '6':
-            pass
     
-        while self.level == '7':
+        while type == '7':
             p = ra (1,9)
             q = ra (1,9)
             char = f'{p}*{q}'
             answer = int(p * q)
             return char, answer
+        
+        # while type == '7':
+        #     char = chr(ra(65,90))
+        #     answer = char
+        #     return char, answer
 
     def 显示得分(self):
         score_text = f'得分：{str(int(self.score))}'
         score = self.sfont.render(score_text, True, self.bk)
         self.scr.blit(score, (20,0))
-        if self.score >= 20:
-            win_text = f'胜利,你太棒了'
+        if self.score >= self.hscore:
+            win_text = f'得了{self.hscore}分,你太棒了'
             score = self.sfont.render(win_text, True, self.re)
             self.scr.blit(score, (200,400))
             self.run = False
